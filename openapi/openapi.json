@@ -1,0 +1,719 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Wortlaut API",
+    "description": "Search over the speeches of the German Bundestag.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/v1/speeches/search": {
+      "get": {
+        "tags": [
+          "Speeches"
+        ],
+        "summary": "Search speeches by word or phrase, with filters, highlights and facet counts",
+        "operationId": "SearchSpeeches",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "faction",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "speaker",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "legislative_period",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "reaction",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem\u002Bjson": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/speeches/{id}": {
+      "get": {
+        "tags": [
+          "Speeches"
+        ],
+        "summary": "Get one speech with its full text, reactions and source",
+        "operationId": "GetSpeech",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpeechDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem\u002Bjson": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trends": {
+      "get": {
+        "tags": [
+          "Trends"
+        ],
+        "summary": "Count the speeches containing a term per year or legislative period, optionally normalised",
+        "operationId": "GetTrends",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bucket",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "normalize",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "faction",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrendResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem\u002Bjson": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/speakers/suggest": {
+      "get": {
+        "tags": [
+          "Speakers"
+        ],
+        "summary": "Suggest speakers by the beginning of their name",
+        "operationId": "SuggestSpeakers",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SpeakerSuggestion"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem\u002Bjson": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "FacetValue": {
+        "required": [
+          "value",
+          "count"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Facets": {
+        "required": [
+          "faction",
+          "legislative_period",
+          "reaction"
+        ],
+        "type": "object",
+        "properties": {
+          "faction": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FacetValue"
+            }
+          },
+          "legislative_period": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FacetValue"
+            }
+          },
+          "reaction": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FacetValue"
+            }
+          }
+        }
+      },
+      "HttpValidationProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "detail": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "instance": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "detail": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "instance": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ReactionInfo": {
+        "required": [
+          "type",
+          "source",
+          "text"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "source": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "text": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "RightsInfo": {
+        "required": [
+          "license",
+          "attribution",
+          "allowed_actions"
+        ],
+        "type": "object",
+        "properties": {
+          "license": {
+            "type": "string"
+          },
+          "attribution": {
+            "type": "string"
+          },
+          "allowed_actions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SearchHit": {
+        "required": [
+          "id",
+          "legislative_period",
+          "session",
+          "date",
+          "delivery",
+          "speaker",
+          "word_count",
+          "source_url"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "legislative_period": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "session": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "agenda_item": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "delivery": {
+            "type": "string"
+          },
+          "speaker": {
+            "$ref": "#/components/schemas/SpeakerInfo"
+          },
+          "word_count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "source_url": {
+            "type": "string"
+          },
+          "highlights": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SearchResponse": {
+        "required": [
+          "total",
+          "page",
+          "page_size",
+          "hits",
+          "facets"
+        ],
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "page_size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchHit"
+            }
+          },
+          "facets": {
+            "$ref": "#/components/schemas/Facets"
+          }
+        }
+      },
+      "SpeakerInfo": {
+        "required": [
+          "id",
+          "name",
+          "faction",
+          "role"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "faction": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "role": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "SpeakerSuggestion": {
+        "required": [
+          "id",
+          "name",
+          "faction"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "faction": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "SpeechDetail": {
+        "required": [
+          "id",
+          "legislative_period",
+          "session",
+          "date",
+          "agenda_item",
+          "delivery",
+          "speaker",
+          "text",
+          "reactions",
+          "word_count",
+          "source_url",
+          "rights"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "legislative_period": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "session": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "agenda_item": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "delivery": {
+            "type": "string"
+          },
+          "speaker": {
+            "$ref": "#/components/schemas/SpeakerInfo"
+          },
+          "text": {
+            "type": "string"
+          },
+          "reactions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReactionInfo"
+            }
+          },
+          "word_count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "source_url": {
+            "type": "string"
+          },
+          "rights": {
+            "$ref": "#/components/schemas/RightsInfo"
+          }
+        }
+      },
+      "TrendPoint": {
+        "required": [
+          "key",
+          "count",
+          "total",
+          "ratio"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ratio": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "TrendResponse": {
+        "required": [
+          "bucket",
+          "normalized",
+          "points"
+        ],
+        "type": "object",
+        "properties": {
+          "bucket": {
+            "type": "string"
+          },
+          "normalized": {
+            "type": "boolean"
+          },
+          "points": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrendPoint"
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Speeches"
+    },
+    {
+      "name": "Trends"
+    },
+    {
+      "name": "Speakers"
+    }
+  ]
+}

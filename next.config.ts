@@ -1,9 +1,10 @@
 import type { NextConfig } from "next";
+import { DEFAULT_API_URL } from "./src/api/config";
+
+const apiUrl = process.env.API_URL ?? DEFAULT_API_URL;
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
+  agentRules: false,
   turbopack: {
     rules: {
       "*.css": {
@@ -11,6 +12,9 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+  },
+  async rewrites() {
+    return [{ source: "/api/:path*", destination: `${apiUrl}/:path*` }];
   },
 };
 
