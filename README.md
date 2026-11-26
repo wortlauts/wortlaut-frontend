@@ -39,6 +39,19 @@ The app runs on http://localhost:3000.
 
 Next.js reads them from the environment or from a `.env.local` file. Copy `.env.example` to `.env.local` to change them; `.env.local` is not committed.
 
+## Container image
+
+The `Dockerfile` builds a small production image (Next.js `standalone` output, runs as the unprivileged `node` user on port 3000). The CI pushes it to `ghcr.io/wortlauts/wortlaut-frontend` on every push to `main`.
+
+```powershell
+docker build -t wortlaut-frontend .
+docker run -p 3000:3000 -e API_URL=http://host.docker.internal:5080 wortlaut-frontend
+```
+
+- `API_URL` is read when the server starts, so one image works in every environment.
+- `SITE_URL` is baked in at build time (`--build-arg SITE_URL=...`), because it ends up in prerendered pages.
+- Behind the reverse proxy, route `/api/*` to the API (path prefix removed) and everything else to this container. The `/api` rewrite inside the app is only a convenience for local development and uses the `API_URL` of the build.
+
 ## API client
 
 `openapi/openapi.json` is a pinned copy of the contract in `wortlaut-api`. The types in `src/api/schema.d.ts` are generated from it:
