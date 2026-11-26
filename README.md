@@ -50,7 +50,7 @@ docker run -p 3000:3000 -e API_URL=http://host.docker.internal:5080 wortlaut-fro
 
 - `API_URL` is read when the server starts, so one image works in every environment.
 - `SITE_URL` is baked in at build time (`--build-arg SITE_URL=...`), because it ends up in prerendered pages.
-- Behind the reverse proxy, route `/api/*` to the API (path prefix removed) and everything else to this container. The `/api` rewrite inside the app is only a convenience for local development and uses the `API_URL` of the build.
+- The app proxies `/api/*` to the API itself (needed for the speaker suggestions in the browser). The target is fixed at build time, so the image build gets `API_URL` as a build argument, which must be the address the API has next to the frontend.
 
 ## API client
 
